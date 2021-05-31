@@ -1,0 +1,13 @@
+{
+  "name": "vdom",
+  "version": "0.1.0",
+  "description": "Virtual DOM implementation",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "0918nobita <nobita.0918@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "4.3.2"
+  }
+}
