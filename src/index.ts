@@ -1,24 +1,17 @@
-type NodeType = VNode<any, any, any[]> | string | number;
+type NodeType = VNode | string | number;
 type Attributes = Record<string, string | Function>;
 
-interface VNode<Name extends string, Attrs extends Attributes, Children extends NodeType[]> {
-    nodeName: Name;
-    attributes: Attrs;
-    children: Children;
+interface VNode {
+    nodeName: string;
+    attributes: Attributes;
+    children: NodeType[];
 }
 
-const isVNode = (node: NodeType): node is VNode<any, any, any[]> =>
+const isVNode = (node: NodeType): node is VNode =>
     typeof node !== 'string' && typeof node !== 'number';
 
-const h = <Name extends string, Attrs extends Attributes, Children extends NodeType[]>(
-    nodeName: Name,
-    attributes: Attrs,
-    ...children: Children
-): VNode<Name, Attrs, Children> => ({
-    nodeName,
-    attributes,
-    children
-});
+const h = (nodeName: string, attributes: Attributes, ...children: NodeType[]): VNode =>
+    ({ nodeName, attributes, children });
 
 const isEventAttr = (attr: string): boolean => /^on/.test(attr);
 
@@ -77,7 +70,7 @@ const computeDiff = (a: NodeType, b: NodeType): Difference => {
     if (!isVNode(a) && a !== b) return 'textNode';
     if (isVNode(a) && isVNode(b)) {
         if (a.nodeName !== b.nodeName) return 'nodeName';
-        if (a.attributes.value !== b.attributes.value) return 'inputValue';
+        if (a.attributes['value'] !== b.attributes['value']) return 'inputValue';
         if (!equal(a.attributes, b.attributes)) return 'attr';
     }
     return 'none';
@@ -118,13 +111,13 @@ const updateElement = (
             parent.replaceChild(createElement(newNode), target);
             break;
         case 'inputValue':
-            updateValue(target as HTMLInputElement, (newNode as VNode<any, any, any[]>).attributes.value as string);
+            updateValue(target as HTMLInputElement, (newNode as VNode).attributes['value'] as string);
             break;
         case 'attr':
             updateAttributes(
                 target as HTMLElement,
-                (oldNode as VNode<any, any, any[]>).attributes,
-                (newNode as VNode<any, any, any[]>).attributes);
+                (oldNode as VNode).attributes,
+                (newNode as VNode).attributes);
             break;
     }
     if (isVNode(oldNode) && isVNode(newNode)) {
@@ -134,62 +127,63 @@ const updateElement = (
     }
 };
 
-interface View<State, ActionSet> {
-    (state: State, actions: ActionSet): VNode<any, any, any[]>;
+type View<State, ActionSet> =
+    (state: State, actions: ActionSet) => VNode;
+
+type ActionType<State, Payload> =
+    (state: State, payload: Payload) => void;
+
+type ActionSet<State, PayloadMap> = {
+    [ActionName in keyof PayloadMap]: ActionType<State, PayloadMap[ActionName]>;
 }
 
-type ActionType<State> = (state: State, ...data: any) => any;
-
-type ActionSet<State, ActionNames extends string> = {
-    [action in ActionNames]: ActionType<State>;
+interface AppConstructor<State, PayloadMap> {
+    el: HTMLElement;
+    initialState: State;
+    view: View<State, ActionSet<State, PayloadMap>>;
+    actions: ActionSet<State, PayloadMap>;
 }
 
-class App<State, ActionNames extends string> {
-    private actions: ActionSet<State, ActionNames>;
-    private oldNode?: VNode<any, any, any[]>;
-    private newNode?: VNode<any, any, any[]>;
-    private shouldSkipRender = false;
+const makeApp = <State, PayloadMap>({
+    el,
+    initialState,
+    view,
+    actions
+}: AppConstructor<State, PayloadMap>) => {
+    let state = initialState;
+    let oldNode: VNode | undefined;
+    let newNode: VNode | undefined;
+    let shouldSkipRendering = false;
 
-    constructor(
-        private el: HTMLElement,
-        private view: View<State, ActionSet<State, ActionNames>>,
-        private state: State,
-        actions: ActionSet<State, ActionNames>,
-    ) {
-        this.actions = this.dispatchAction(actions);
-        this.reconstructVNode();
+    const boundActions = {} as ActionSet<State, PayloadMap>;
+
+    const render = () => {
+        updateElement(el, oldNode, newNode);
+        oldNode = newNode;
+        shouldSkipRendering = false;
+    };
+
+    const scheduleRendering = () => {
+        if (shouldSkipRendering) return;
+        shouldSkipRendering = true;
+        setTimeout(() => render());
+    };
+
+    const reconstructVNode = () => {
+        newNode = view(state, boundActions);
+        scheduleRendering();
+    };
+
+    for (const key in actions) {
+        const action = actions[key];
+        boundActions[key] = (state, payload) => {
+            action(state, payload);
+            reconstructVNode();
+        };
     }
 
-    private dispatchAction(actions: ActionSet<State, ActionNames>) {
-        const dispatched = {} as ActionSet<State, ActionNames>;
-        for (const key in actions) {
-            const action = actions[key]!;
-            dispatched[key] = (state: State, ...data: any) => {
-                const newState = action(state, ...data);
-                this.reconstructVNode();
-                return newState;
-            };
-        }
-        return dispatched;
-    }
-
-    private reconstructVNode(): void {
-        this.newNode = this.view(this.state, this.actions);
-        this.scheduleRendering();
-    }
-
-    private scheduleRendering(): void {
-        if (this.shouldSkipRender) return;
-        this.shouldSkipRender = true;
-        setTimeout(this.render.bind(this));
-    }
-
-    private render(): void {
-        updateElement(this.el, this.oldNode, this.newNode);
-        this.oldNode = this.newNode;
-        this.shouldSkipRender = false;
-    }
-}
+    return () => reconstructVNode();
+};
 
 interface CounterState {
     count: number;
@@ -199,7 +193,7 @@ const initialState: CounterState = {
     count: 0,
 };
 
-const actions: ActionSet<CounterState, 'increment'> = {
+const actions: ActionSet<CounterState, { increment: {} }> = {
     increment(state) {
         console.log('state', state);
         state.count++;
@@ -212,8 +206,9 @@ const view: View<CounterState, CounterActions> = (state, actions) =>
     h('div', {},
         h('p', {},
             state.count),
-        h('button', { onClick: () => actions.increment(state) },
+        h('button', { onClick: () => actions.increment(state, {}) },
             'Count up'));
 
-const root = document.getElementById('root')!;
-new App(root, view, initialState, actions);
+const el = document.getElementById('root')!;
+const run = makeApp({ el, initialState, view, actions });
+run();
