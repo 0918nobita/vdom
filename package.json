@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "description": "Virtual DOM implementation",
   "scripts": {
-    "build": "tsc"
+    "build": "esbuild --platform=browser --bundle --minify --outfile=lib/index.js src/index.ts",
+    "dev": "esbuild --platform=browser --bundle --outfile=lib/index.js --watch src/index.ts"
   },
   "author": "0918nobita <nobita.0918@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "esbuild": "0.12.5",
     "typescript": "4.3.2"
   }
 }

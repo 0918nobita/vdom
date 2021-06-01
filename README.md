@@ -2,7 +2,7 @@
 
 ```bash
 npm i
-npx tsc
+npm run build
 ```
 
 ``/index.html``：
