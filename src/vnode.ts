@@ -12,8 +12,9 @@ export interface VNode {
 const isVNode = (node: NodeType): node is VNode =>
     typeof node !== 'string' && typeof node !== 'number';
 
-export const h = (nodeName: string, attributes: Attributes, ...children: NodeType[]): VNode =>
-    ({ nodeName, attributes, children });
+export const h =
+    (nodeName: string, attributes: Attributes, ...children: NodeType[]): VNode =>
+        ({ nodeName, attributes, children });
 
 const isEventAttr = (attr: string): boolean => /^on/.test(attr);
 
