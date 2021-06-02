@@ -1,7 +1,17 @@
 import { equal } from './equal';
 
 type PropsType = Record<string, string | Function>;
-type NodeType<Props extends PropsType = any> = VNode<Props> | string | number;
+type NodeType<Props extends PropsType = any> =
+    | VNode<Props>
+    | Fragment
+    | string
+    | number;
+
+export class Fragment {
+    // HACK: Nominal typing
+    // @ts-ignore TS6133: _tag is declared but its value is never read.
+    private _tag = 'Fragment' as const;
+}
 
 class Component<Props extends PropsType = {}, State = {}> {
     public state: State | null = null;
@@ -11,37 +21,44 @@ class Component<Props extends PropsType = {}, State = {}> {
     setState(newState: State) {
         Object.assign(this.state, newState);
     }
-}
 
-/*
-interface IComponent<Props extends PropsType = {}, State = {}> {
-    componentWillMount?(): void;
-    componentDidMount?(): void;
+    componentWillMount() {}
+    componentDidMount() {}
 
-    componentWillUnmount?(): void;
+    componentWillUnmount() {}
 
-    componentWillReceiveProps?(nextProps: Readonly<Props>): void;
+    /** 新しい Props を受け取る */
+    componentWillReceiveProps(_nextProps: Readonly<Props>) {}
 
-    shouldComponentUpdate?(
+    /** 再レンダリングが必要かどうか判定する */
+    shouldComponentUpdate(
         nextProps: Readonly<Props>,
         nextState: Readonly<State>
-    ): boolean;
-    componentWillUpdate?(): void;
-    componentDidUpdate?(
-        previousProps: Readonly<Props>,
-        previousState: Readonly<State>
-    ): void;
+    ): boolean {
+        return this.props !== nextProps || this.state !== nextState;
+    }
+
+    componentWillUpdate() {}
+    componentDidUpdate(
+        _previousProps: Readonly<Props>,
+        _previousState: Readonly<State>
+    ) {}
+
+    render(): NodeType {
+        return new Fragment();
+    }
 }
-*/
 
 export interface VNode<Props extends PropsType = {}> {
-    type: string | ComponentType<Props>;
+    type: string | Fragment | ComponentType<Props>;
     props: Props;
     children: NodeType[];
     _component: Component<any, any> | null;
 }
 
-type ComponentType<Props extends PropsType = {}> = ComponentClass<Props> | FunctionComponent<Props>;
+type ComponentType<Props extends PropsType = {}> =
+    | ComponentClass<Props>
+    | FunctionComponent<Props>;
 
 interface ComponentClass<Props extends PropsType = {}, State = {}> {
     new (props: Props): Component<Props, State>;
@@ -59,7 +76,7 @@ const isVNode = <Props extends PropsType = {}>(
 };
 
 export const h = <Props extends PropsType = {}>(
-    type: string | ComponentType<Props>,
+    type: string | Fragment | ComponentType<Props>,
     props: Props,
     ...children: NodeType[]
 ): VNode<Props> => ({ type, props, children, _component: null });
@@ -79,14 +96,20 @@ const setAttributes = (target: HTMLElement, props: PropsType): void => {
 
 const createElement = <Props extends PropsType = {}>(
     node: NodeType<Props>
-): HTMLElement | Text => {
+): Node | Text => {
     if (!isVNode(node)) return document.createTextNode(node.toString());
 
     // TODO: Implement functional components
     if (typeof node.type === 'function') throw new Error('Not implemented');
 
-    const el: HTMLElement = document.createElement(node.type);
-    setAttributes(el, node.props);
+    let el: Node;
+    if (node.type instanceof Fragment) {
+        el = document.createDocumentFragment();
+    } else {
+        el = document.createElement(node.type);
+        setAttributes(el as HTMLElement, node.props);
+    }
+
     for (const child of node.children) el.appendChild(createElement(child));
     return el;
 };
