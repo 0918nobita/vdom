@@ -1,4 +1,5 @@
-import { VNode, updateElement } from './vnode';
+import { VNode } from './vnode';
+import { updateElement } from './dom';
 
 export type View<State, ActionSet> = (
     state: State,

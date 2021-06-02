@@ -1,4 +1,4 @@
-import { h } from './vnode';
+import { h } from './hyperscript';
 import { ActionSet, View, makeApp } from './app';
 
 interface CounterState {
