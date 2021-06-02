@@ -27,7 +27,7 @@ export const makeApp = <State, PayloadMap>({
     let newNode: VNode | undefined;
     let shouldSkipRendering = false;
 
-    const state = initialState;
+    const state = Object.assign({}, initialState);
     const boundActions = {} as ActionSet<State, PayloadMap>;
 
     const render = () => {
