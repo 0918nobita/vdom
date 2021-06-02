@@ -3,10 +3,35 @@ import { equal } from './equal';
 type PropsType = Record<string, string | Function>;
 type NodeType<Props extends PropsType = any> = VNode<Props> | string | number;
 
+interface Component<Props = {}, State = {}> {
+    props: Readonly<Props>;
+    state: Readonly<State>;
+
+    setState(state: State): void;
+
+    componentWillMount?(): void;
+    componentDidMount?(): void;
+
+    componentWillUnmount?(): void;
+
+    componentWillReceiveProps?(nextProps: Readonly<Props>): void;
+
+    shouldComponentUpdate?(
+        nextProps: Readonly<Props>,
+        nextState: Readonly<State>
+    ): boolean;
+    componentWillUpdate?(): void;
+    componentDidUpdate?(
+        previousProps: Readonly<Props>,
+        previousState: Readonly<State>
+    ): void;
+}
+
 export interface VNode<Props extends PropsType = {}> {
     type: string | FunctionalComponent<Props>;
     props: Props;
     children: NodeType[];
+    _component: Component<any, any> | null;
 }
 
 type FunctionalComponent<Props extends PropsType = {}> = (
@@ -24,7 +49,7 @@ export const h = <Props extends PropsType = {}>(
     type: string | FunctionalComponent<Props>,
     props: Props,
     ...children: NodeType[]
-): VNode<Props> => ({ type, props, children });
+): VNode<Props> => ({ type, props, children, _component: null });
 
 const isEventProp = (prop: string): boolean => /^on/.test(prop);
 
