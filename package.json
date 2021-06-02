@@ -4,12 +4,20 @@
   "description": "Virtual DOM implementation",
   "scripts": {
     "build": "esbuild --platform=browser --bundle --minify --outfile=lib/index.js src/index.ts",
-    "dev": "esbuild --platform=browser --bundle --outfile=lib/index.js --watch src/index.ts"
+    "dev": "esbuild --platform=browser --bundle --outfile=lib/index.js --watch src/index.ts",
+    "format": "prettier --write ./src/**/*.ts"
   },
   "author": "0918nobita <nobita.0918@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "esbuild": "0.12.5",
+    "prettier": "2.3.0",
     "typescript": "4.3.2"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": true,
+    "singleQuote": true
   }
 }
