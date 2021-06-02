@@ -3,12 +3,17 @@ import { equal } from './equal';
 type PropsType = Record<string, string | Function>;
 type NodeType<Props extends PropsType = any> = VNode<Props> | string | number;
 
-interface Component<Props = {}, State = {}> {
-    props: Readonly<Props>;
-    state: Readonly<State>;
+class Component<Props = {}, State = {}> {
+    public state: State | null = null;
 
-    setState(state: State): void;
+    constructor(public props: Props) {}
 
+    setState(newState: State) {
+        Object.assign(this.state, newState);
+    }
+}
+
+interface IComponent<Props = {}, State = {}> {
     componentWillMount?(): void;
     componentDidMount?(): void;
 
