@@ -1,14 +1,15 @@
 import { VNode, updateElement } from './vnode';
 
-export type View<State, ActionSet> =
-    (state: State, actions: ActionSet) => VNode;
+export type View<State, ActionSet> = (
+    state: State,
+    actions: ActionSet
+) => VNode;
 
-type ActionType<State, Payload> =
-    (state: State, payload: Payload) => void;
+type ActionType<State, Payload> = (state: State, payload: Payload) => void;
 
 export type ActionSet<State, PayloadMap> = {
     [ActionName in keyof PayloadMap]: ActionType<State, PayloadMap[ActionName]>;
-}
+};
 
 interface AppConstructor<State, PayloadMap> {
     el: HTMLElement;
@@ -21,7 +22,7 @@ export const makeApp = <State, PayloadMap>({
     el,
     initialState,
     view,
-    actions
+    actions,
 }: AppConstructor<State, PayloadMap>) => {
     let oldNode: VNode | undefined;
     let newNode: VNode | undefined;
