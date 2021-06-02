@@ -3,7 +3,7 @@ import { equal } from './equal';
 type PropsType = Record<string, string | Function>;
 type NodeType<Props extends PropsType = any> = VNode<Props> | string | number;
 
-class Component<Props = {}, State = {}> {
+class Component<Props extends PropsType = {}, State = {}> {
     public state: State | null = null;
 
     constructor(public props: Props) {}
@@ -13,7 +13,8 @@ class Component<Props = {}, State = {}> {
     }
 }
 
-interface IComponent<Props = {}, State = {}> {
+/*
+interface IComponent<Props extends PropsType = {}, State = {}> {
     componentWillMount?(): void;
     componentDidMount?(): void;
 
@@ -31,16 +32,23 @@ interface IComponent<Props = {}, State = {}> {
         previousState: Readonly<State>
     ): void;
 }
+*/
 
 export interface VNode<Props extends PropsType = {}> {
-    type: string | FunctionalComponent<Props>;
+    type: string | ComponentType<Props>;
     props: Props;
     children: NodeType[];
     _component: Component<any, any> | null;
 }
 
-type FunctionalComponent<Props extends PropsType = {}> = (
-    porps: Props
+type ComponentType<Props extends PropsType = {}> = ComponentClass<Props> | FunctionComponent<Props>;
+
+interface ComponentClass<Props extends PropsType = {}, State = {}> {
+    new (props: Props): Component<Props, State>;
+}
+
+type FunctionComponent<Props extends PropsType = {}> = (
+    props: Props
 ) => VNode<Props>;
 
 const isVNode = <Props extends PropsType = {}>(
@@ -51,7 +59,7 @@ const isVNode = <Props extends PropsType = {}>(
 };
 
 export const h = <Props extends PropsType = {}>(
-    type: string | FunctionalComponent<Props>,
+    type: string | ComponentType<Props>,
     props: Props,
     ...children: NodeType[]
 ): VNode<Props> => ({ type, props, children, _component: null });
