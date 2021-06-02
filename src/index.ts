@@ -2,7 +2,7 @@ interface ComponentConstructor {
     getDerivedStateFromError: null | ((error: Error) => any);
 }
 
-interface Component {
+export interface Component {
     constructor: ComponentConstructor;
     setState(state: any): void;
     componentDidCatch: null | ((error: Error) => void);
@@ -11,13 +11,13 @@ interface Component {
     _processingException: any;
 }
 
-interface VNode {
+export interface VNode {
     _component: null | Component;
     _parent: any;
 }
 
 /** 最も近いエラー境界を見つけ、エラーを投げた上でそれを呼び出す */
-const _catchError = (error: Error, vnode: VNode) => {
+export const _catchError = (error: Error, vnode: VNode) => {
     for (; (vnode = vnode._parent); ) {
         const component = vnode._component;
 
