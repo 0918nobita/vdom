@@ -1,4 +1,5 @@
 // TODO: Implement enqueueRender function
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-function
 const enqueueRender = (_component: Component<any, any>): void => {};
 
 type UpdateState<P, S, K extends keyof S> =
@@ -11,7 +12,9 @@ type UpdateState<P, S, K extends keyof S> =
     | null;
 
 export class Component<P, S> {
-    static getDerivedStateFromError?(error: any): object | null;
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    static getDerivedStateFromError?(error: any): Record<string, never> | null;
 
     private nextState: S | null = null;
     private renderCallbacks: any[] = [];
@@ -22,7 +25,9 @@ export class Component<P, S> {
     public _processingException: any;
     public state: S | null = null;
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     constructor(public props: P, public context?: any) {}
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 
     setState<K extends keyof S>(
         update: UpdateState<P, S, K>,
@@ -55,8 +60,9 @@ type RefCallback<T> = (instance: T | null) => void;
 type Ref<T> = RefObject<T> | RefCallback<T>;
 
 type ComponentChild =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     | VNode<any>
-    | object
+    | Record<string, never>
     | string
     | number
     | bigint
@@ -67,7 +73,7 @@ type ComponentChild =
 type ComponentChildren = ComponentChild[] | ComponentChild;
 
 interface Attributes {
-    key?: string | number | any;
+    key?: string | number;
     jsx?: boolean;
 }
 
@@ -75,23 +81,27 @@ type RenderableProps<P, RefType> = P &
     Readonly<Attributes & { children?: ComponentChildren; ref?: Ref<RefType> }>;
 
 interface FunctionComponent<P> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (props: RenderableProps<P, any>, context?: any): VNode<any> | null;
     displayName?: string;
     defaultProps?: Partial<P>;
 }
-type ComponentType<P> = ComponentClass<P, {}> | FunctionComponent<P>;
+type ComponentType<P> =
+    | ComponentClass<P, Record<string, never>>
+    | FunctionComponent<P>;
 
 export interface VNode<P> {
     type: ComponentType<P> | string;
-    _component: null | Component<P, {}>;
+    _component: null | Component<P, Record<string, never>>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     _parent: VNode<any> | null;
 }
 
-interface Consumer<T>
-    extends FunctionComponent<{ children: (value: T) => ComponentChildren }> {}
+type Consumer<T> = FunctionComponent<{
+    children: (value: T) => ComponentChildren;
+}>;
 
-interface Provider<T>
-    extends FunctionComponent<{ value: T; children: ComponentChildren }> {}
+type Provider<T> = FunctionComponent<{ value: T; children: ComponentChildren }>;
 
 interface Context<T> {
     Consumer: Consumer<T>;
@@ -105,25 +115,30 @@ export interface Component<P, S> {
 
     componentWillUnmount?(): void;
 
-    getChildContext?(): object;
+    getChildContext?(): Record<string, never>;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     componentWillReceiveProps?(nextProps: Readonly<P>, nextContext: any): void;
 
     shouldComponentUpdate?(
         nextProps: Readonly<P>,
         nextState: Readonly<S>,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         nextContext: any
     ): boolean;
     componentWillUpdate?(
         previousProps: Readonly<P>,
         previousState: Readonly<S>,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         snapshot: any
     ): void;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     componentDidCatch?(error: any, errorInfo?: any): void;
 }
 
 export interface ComponentClass<P, S> {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     new (props: P, context: any): Component<P, S>;
     displayName?: string;
     defaultProps?: Partial<P>;
@@ -133,18 +148,23 @@ export interface ComponentClass<P, S> {
         state: Readonly<S>
     ): Partial<S> | null;
     getDerivedStateFromError?(error: any): Partial<S> | null;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 }
 
+// TODO: Make the types more precise
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
 const Fragment = ((props: any) => props.children) as unknown as ComponentClass<
-    {},
-    {}
+    Record<string, never>,
+    Record<string, never>
 >;
 
 // TODO: Implement createVNode function
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-function
 const createVNode = (_a: any, _b: any, _c: any, _d: any, _e: any): any => {};
 
 // TODO: Implement diff function
 interface DiffArgs {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     parentDom: any;
     childVNode: any;
     oldVNode: any;
@@ -154,11 +174,14 @@ interface DiffArgs {
     commitQueue: any;
     oldDom: any;
     isHydrating: boolean;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
 const diff = (_args: DiffArgs): void => {};
 
 // TODO: Implement diffChildren function
 interface DiffChildrenArgs {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     parentDom: any;
     renderResult: any;
     newParentVNode: any;
@@ -169,6 +192,7 @@ interface DiffChildrenArgs {
     commitQueue: any;
     oldDom: any;
     isHydrating: boolean;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 }
 export const diffChildren = ({
     parentDom,
@@ -181,10 +205,11 @@ export const diffChildren = ({
     commitQueue,
     oldDom,
     isHydrating,
-}: DiffChildrenArgs) => {
+}: DiffChildrenArgs): void => {
     let oldVNode /*, newDom, firstChildDom, refs*/;
-    let oldChildren = (oldParentVNode && oldParentVNode._children) || [];
-    let { length: oldChildrenLength } = oldChildren;
+    /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
+    const oldChildren = (oldParentVNode && oldParentVNode._children) || [];
+    const { length: oldChildrenLength } = oldChildren;
     newParentVNode._children = [];
     for (let i = 0; i < renderResult.length; i++) {
         let childVNode = renderResult[i];
@@ -225,7 +250,7 @@ export const diffChildren = ({
         if (childVNode === null) continue;
 
         childVNode._parent = newParentVNode;
-        childVNode._depth = newParentVNode._depth + 1;
+        childVNode._depth = (newParentVNode._depth as number) + 1;
         oldVNode = oldChildren[i];
         if (
             oldVNode === null ||
@@ -261,10 +286,15 @@ export const diffChildren = ({
             isHydrating,
         });
     }
+    /* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
 };
 
 /** 最も近いエラー境界を見つけ、エラーを投げた上でそれを呼び出す */
-export const _catchError = (error: Error, vnode: VNode<{}>) => {
+export const _catchError = (
+    error: Error,
+    vnode: VNode<Record<string, never>>
+): never | Component<Record<string, never>, Record<string, never>> => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     for (; vnode._parent && (vnode = vnode._parent); ) {
         const component = vnode._component;
 
@@ -276,11 +306,13 @@ export const _catchError = (error: Error, vnode: VNode<{}>) => {
 
             if (ctor && ctor.getDerivedStateFromError) {
                 component.setState(ctor.getDerivedStateFromError(error));
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 handled = component._dirty;
             }
 
             if (component.componentDidCatch) {
                 component.componentDidCatch(error);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 handled = component._dirty;
             }
 
@@ -290,6 +322,7 @@ export const _catchError = (error: Error, vnode: VNode<{}>) => {
                 return component;
             }
         } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             error = e;
         }
     }
