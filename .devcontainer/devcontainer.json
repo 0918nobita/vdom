@@ -1,0 +1,15 @@
+{
+  "name": "vdom",
+  "context": "..",
+  "dockerFile": "./Dockerfile",
+  "settings": {
+    "terminal.integrated.profiles.linux": {
+      "bash": {
+        "path": "/bin/bash"
+      },
+    }
+  },
+  "extensions": [],
+  "forwardPorts": [],
+  "postCreateCommand": ["npm", "ci"]
+}
