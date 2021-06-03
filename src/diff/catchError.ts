@@ -1,10 +1,11 @@
 import { Component, VNode } from '../component';
+import { AnyObject } from '../types';
 
 /** 最も近いエラー境界を見つけ、エラーを投げた上でそれを呼び出す */
 export const _catchError = (
     error: Error,
-    vnode: VNode<Record<string, never>>
-): never | Component<Record<string, never>, Record<string, never>> => {
+    vnode: VNode<AnyObject>
+): never | Component<AnyObject, AnyObject> => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     for (; vnode._parent && (vnode = vnode._parent); ) {
         const component = vnode._component;

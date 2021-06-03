@@ -1,10 +1,11 @@
 import { Component, VNode } from '../component';
+import { AnyObject, EmptyObject } from '../types';
 import { _catchError } from './catchError';
 
 it('_catchError', () => {
     const error = new Error();
 
-    const vnode: VNode<Record<string, never>> = {
+    const vnode: VNode<AnyObject> = {
         type: 'div',
         _component: null,
         _parent: null,
@@ -20,13 +21,10 @@ it('_catchError (componentDidCatch)', () => {
         .fn()
         .mockName('componentDidCatch');
 
-    const component = new Component<
-        Record<string, never>,
-        Record<string, never>
-    >({});
+    const component = new Component<EmptyObject, EmptyObject>({});
     component.componentDidCatch = componentDidCatch;
 
-    const vnode: VNode<Record<string, never>> = {
+    const vnode: VNode<AnyObject> = {
         type: 'button',
         _component: null,
         _parent: { type: 'div', _component: component, _parent: null },

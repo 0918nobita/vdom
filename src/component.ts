@@ -1,6 +1,8 @@
+import { AnyObject } from './types';
+
 export interface VNode<P> {
     type: ComponentType<P> | string;
-    _component: null | Component<P, Record<string, never>>;
+    _component: null | Component<P, AnyObject>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     _parent: VNode<any> | null;
 }
@@ -8,7 +10,7 @@ export interface VNode<P> {
 type ComponentChild =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     | VNode<any>
-    | Record<string, never>
+    | AnyObject
     | string
     | number
     | bigint
@@ -49,13 +51,9 @@ interface FunctionComponent<P> {
     defaultProps?: Partial<P>;
 }
 
-type ComponentType<P> =
-    | ComponentClass<P, Record<string, never>>
-    | FunctionComponent<P>;
+type ComponentType<P> = ComponentClass<P, AnyObject> | FunctionComponent<P>;
 
-export const rerenderQueue: Array<
-    Component<Record<string, never>, Record<string, never>>
-> = [];
+export const rerenderQueue: Array<Component<AnyObject, AnyObject>> = [];
 
 // TODO (#1): Implement enqueueRender function
 /**
@@ -83,22 +81,13 @@ export interface ComponentClass<P, S> {
     /* eslint-enable @typescript-eslint/no-explicit-any */
 }
 
-type UpdateState<P, S, K extends keyof S> =
-    | ((
-          prevState: Readonly<S>,
-          props: Readonly<P>
-      ) => Pick<S, K> | Partial<S> | null)
-    | Pick<S, K>
-    | Partial<S>
-    | null;
-
 export class Component<P, S> {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    static getDerivedStateFromError?(error: any): Record<string, never> | null;
+    static getDerivedStateFromError?(error: any): AnyObject | null;
 
     private nextState: S | null = null;
-    private renderCallbacks: any[] = [];
+    private renderCallbacks: Array<() => void> = [];
     private vnode: any;
 
     // TODO (#2): Add description
@@ -113,10 +102,7 @@ export class Component<P, S> {
     constructor(public props: P, public context?: any) {}
     /* eslint-enable @typescript-eslint/no-explicit-any */
 
-    setState<K extends keyof S>(
-        update: UpdateState<P, S, K>,
-        callback?: () => void
-    ): void {
+    setState(state: Partial<S> | null, callback?: () => void): void {
         let s;
         if (this.nextState !== null && this.nextState !== this.state) {
             s = this.nextState;
@@ -124,16 +110,10 @@ export class Component<P, S> {
             s = this.nextState = Object.assign({}, this.state);
         }
 
-        if (typeof update === 'function')
-            update = update(Object.assign({}, s), this.props);
-        if (update) Object.assign(s, update);
-
-        if (update === null) return;
-
-        if (this.vnode) {
-            if (callback !== undefined) this.renderCallbacks.push(callback);
-            enqueueRender(this);
-        }
+        if (state) Object.assign(s, state);
+        if (state === null || !this.vnode) return;
+        if (callback !== undefined) this.renderCallbacks.push(callback);
+        enqueueRender(this);
     }
 }
 
@@ -143,7 +123,7 @@ export interface Component<P, S> {
 
     componentWillUnmount?(): void;
 
-    getChildContext?(): Record<string, never>;
+    getChildContext?(): AnyObject;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     componentWillReceiveProps?(nextProps: Readonly<P>, nextContext: any): void;
