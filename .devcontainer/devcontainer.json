@@ -7,9 +7,19 @@
       "bash": {
         "path": "/bin/bash"
       },
-    }
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "indentRainbow.ignoreErrorLanguages": [
+      "markdown",
+      "typescript"
+    ]
   },
-  "extensions": [],
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "editorconfig.editorconfig",
+    "coenraads.bracket-pair-colorizer",
+    "oderwat.indent-rainbow"
+  ],
   "forwardPorts": [],
-  "postCreateCommand": ["npm", "ci"]
+  "postCreateCommand": ["yarn"]
 }

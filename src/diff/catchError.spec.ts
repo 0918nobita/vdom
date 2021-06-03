@@ -1,4 +1,5 @@
-import { _catchError, Component, VNode } from './index';
+import { Component, VNode } from '../component';
+import { _catchError } from './catchError';
 
 it('_catchError', () => {
     const error = new Error();
