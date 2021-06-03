@@ -5,13 +5,25 @@
   "scripts": {
     "build": "esbuild --platform=browser --bundle --minify --outfile=lib/index.js src/index.ts",
     "dev": "esbuild --platform=browser --bundle --outfile=lib/index.js --watch src/index.ts",
-    "format": "prettier --write ./src/**/*.ts"
+    "lint": "eslint . --ext .ts",
+    "format": "eslint . --fix --ext .ts",
+    "test": "jest"
   },
   "author": "0918nobita <nobita.0918@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "26.0.23",
+    "@typescript-eslint/eslint-plugin": "4.26.0",
+    "@typescript-eslint/parser": "4.26.0",
     "esbuild": "0.12.5",
+    "eslint": "7.27.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-prettier": "3.4.0",
+    "eslint-plugin-simple-import-sort": "7.0.0",
+    "eslint-plugin-todo-plz": "1.2.0",
+    "jest": "27.0.3",
     "prettier": "2.3.0",
+    "ts-jest": "27.0.2",
     "typescript": "4.3.2"
   },
   "prettier": {

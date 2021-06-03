@@ -1,0 +1,25 @@
+{
+  "name": "vdom",
+  "context": "..",
+  "dockerFile": "./Dockerfile",
+  "settings": {
+    "terminal.integrated.profiles.linux": {
+      "bash": {
+        "path": "/bin/bash"
+      },
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "indentRainbow.ignoreErrorLanguages": [
+      "markdown",
+      "typescript"
+    ]
+  },
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "editorconfig.editorconfig",
+    "coenraads.bracket-pair-colorizer",
+    "oderwat.indent-rainbow"
+  ],
+  "forwardPorts": [],
+  "postCreateCommand": ["yarn"]
+}
