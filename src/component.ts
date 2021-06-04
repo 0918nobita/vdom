@@ -9,7 +9,7 @@ export interface VNode<P extends AnyObject> {
 }
 
 type ComponentChild =
-    | VNode<AnyObject>
+    | VNode<{}>
     | AnyObject
     | string
     | number
