@@ -1,8 +1,11 @@
-import { Component, VNode } from '../component';
+import { Component, ComponentEnv, VNode } from '../component';
+import { Options } from '../options';
 import { AnyObject } from '../types';
 
 /** 最も近いエラー境界を見つけ、エラーを投げた上でそれを呼び出す */
 export const _catchError = (
+    env: ComponentEnv,
+    options: Options,
     error: Error,
     vnode: VNode<AnyObject>
 ): never | Component<AnyObject, AnyObject> => {
@@ -17,7 +20,11 @@ export const _catchError = (
             let handled;
 
             if (ctor && ctor.getDerivedStateFromError) {
-                component.setState(ctor.getDerivedStateFromError(error));
+                component.setState(
+                    env,
+                    options,
+                    ctor.getDerivedStateFromError(error)
+                );
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 handled = component._dirty;
             }

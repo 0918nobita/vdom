@@ -75,17 +75,16 @@ const renderComponent = (
     // eslint-disable-next-line @typescript-eslint/no-empty-function
 ): void => {};
 
+/** キューに積まれたすべてのコンポーネントをレンダリングすることで、レンダーキューをフラッシュする */
 const process = (env: ComponentEnv) => {
-    let queue;
+    // TODO (#13): 内部処理についての説明を追加する
     while ((env.rerenderCount = env.rerenderQueue.length)) {
-        queue = env.rerenderQueue.sort(
+        const queue = env.rerenderQueue.sort(
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             (a, b) => a._vnode._depth - b._vnode._depth
         );
         env.rerenderQueue = [];
-        queue.some((c) => {
-            if (c._dirty) renderComponent(c);
-        });
+        for (const c of queue) if (c._dirty) renderComponent(c);
     }
 };
 
