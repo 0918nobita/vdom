@@ -42,29 +42,29 @@ export const diffChildren = ({
             typeof childVNode === 'number' ||
             typeof childVNode === 'bigint'
         ) {
-            childVNode = newParentVNode._children[i] = createVNode(
-                null,
-                childVNode,
-                null,
-                null,
-                childVNode
-            );
+            childVNode = newParentVNode._children[i] = createVNode({
+                type: null,
+                props: childVNode,
+                key: null,
+                ref: null,
+                original: childVNode,
+            });
         } else if (Array.isArray(childVNode)) {
-            childVNode = newParentVNode._children[i] = createVNode(
-                Fragment,
-                { children: childVNode },
-                null,
-                null,
-                null
-            );
+            childVNode = newParentVNode._children[i] = createVNode({
+                type: Fragment,
+                props: { children: childVNode },
+                key: null,
+                ref: null,
+                original: null,
+            });
         } else if (childVNode._depth > 0) {
-            childVNode = newParentVNode._children[i] = createVNode(
-                childVNode.type,
-                childVNode.props,
-                childVNode.key,
-                null,
-                childVNode._original
-            );
+            childVNode = newParentVNode._children[i] = createVNode({
+                type: childVNode.type,
+                props: childVNode.props,
+                key: childVNode.key,
+                ref: null,
+                original: childVNode._original,
+            });
         } else {
             childVNode = newParentVNode._children[i] = childVNode;
         }
