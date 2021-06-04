@@ -1,0 +1,22 @@
+name: Pull Request Review
+
+on: pull_request
+
+jobs:
+  pr-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: yarn
+      - name: Review using ESLint
+        uses: reviewdog/action-eslint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          eslint_flags: '. --ext .ts'
+      - name: Review using Jest
+        uses: ArtiomTr/jest-coverage-report-action@v1.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          threshold: 80
