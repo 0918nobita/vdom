@@ -1,4 +1,5 @@
-import { CreateElementEnv, createVNode, Fragment } from '../createElement';
+import type { CreateElementEnv } from '../createElement';
+import { createVNode, Fragment } from '../createElement';
 import type { Options } from '../options';
 import { diff } from './index';
 

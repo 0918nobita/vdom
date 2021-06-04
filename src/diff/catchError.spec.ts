@@ -1,6 +1,7 @@
-import { Component, createEnv, VNode } from '../component';
+import type { VNode } from '../component';
+import { Component, createEnv } from '../component';
 import { createOptions } from '../options';
-import { AnyObject, EmptyObject } from '../types';
+import type { AnyObject, EmptyObject } from '../types';
 import { _catchError } from './catchError';
 
 const createCommonConfig = () => ({

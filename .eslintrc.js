@@ -28,6 +28,9 @@ module.exports = {
                 sourceType: 'module',
                 project: './tsconfig.json',
             },
+            rules: {
+                '@typescript-eslint/consistent-type-imports': 'error',
+            },
         },
     ],
 };

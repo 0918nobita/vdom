@@ -1,6 +1,6 @@
-import { ComponentClass } from './component';
-import { Options } from './options';
-import { EmptyObject } from './types';
+import type { ComponentClass } from './component';
+import type { Options } from './options';
+import type { EmptyObject } from './types';
 
 export interface CreateElementEnv {
     vnodeId: number;

@@ -1,6 +1,6 @@
-import { VNode } from './component';
+import type { VNode } from './component';
 import { _catchError } from './diff/catchError';
-import { AnyObject } from './types';
+import type { AnyObject } from './types';
 
 export interface Options {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

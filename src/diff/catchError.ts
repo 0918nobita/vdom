@@ -1,6 +1,6 @@
-import { Component, ComponentEnv, VNode } from '../component';
+import type { Component, ComponentEnv, VNode } from '../component';
 import type { Options } from '../options';
-import { AnyObject } from '../types';
+import type { AnyObject } from '../types';
 
 /** 最も近いエラー境界を見つけ、エラーを投げた上でそれを呼び出す */
 export const _catchError = (
