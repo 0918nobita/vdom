@@ -20,8 +20,8 @@ export const createVNode = ({
     ref,
     original,
 }: CreateVNodeArgs): any => {
+    /* eslint-enable @typescript-eslint/no-explicit-any */
     const vnode = {
-        /* eslint-enable @typescript-eslint/no-explicit-any */
         /* eslint-disable @typescript-eslint/no-unsafe-assignment */
         type,
         props,
@@ -35,7 +35,7 @@ export const createVNode = ({
         _component: null,
         _hydrating: null,
         constructor: undefined,
-        _original: original === null ? ++vnodeId : original,
+        _original: original ?? ++vnodeId,
         /* eslint-enable @typescript-eslint/no-unsafe-assignment */
     };
     if (options.vnode) options.vnode(vnode);
