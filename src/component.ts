@@ -1,3 +1,4 @@
+import { Options } from './options';
 import { AnyObject } from './types';
 
 export interface VNode<P extends AnyObject> {
@@ -55,24 +56,73 @@ type ComponentType<P extends AnyObject> =
     | FunctionComponent<P>;
 
 export interface ComponentEnv {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    prevDebounce: any;
+    rerenderCount: number;
     rerenderQueue: Array<Component<AnyObject, AnyObject>>;
 }
 
-export const createEnv = (): ComponentEnv => ({ rerenderQueue: [] });
+export const createEnv = (): ComponentEnv => ({
+    prevDebounce: null,
+    rerenderCount: 0,
+    rerenderQueue: [],
+});
 
-// TODO (#1): Implement enqueueRender function
+// TODO (#12): Implement renderComponent function
+const renderComponent = (
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _component: Component<AnyObject, AnyObject>
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+): void => {};
+
+const process = (env: ComponentEnv) => {
+    let queue;
+    while ((env.rerenderCount = env.rerenderQueue.length)) {
+        queue = env.rerenderQueue.sort(
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            (a, b) => a._vnode._depth - b._vnode._depth
+        );
+        env.rerenderQueue = [];
+        queue.some((c) => {
+            if (c._dirty) renderComponent(c);
+        });
+    }
+};
+
+const defer =
+    typeof Promise === 'function'
+        ? Promise.prototype.then.bind(Promise.resolve())
+        : setTimeout;
+
 /**
  * コンポーネントの再レンダリングをエンキューする
  * @param component 再レンダリングするコンポーネント
  */
 export const enqueueRender = (
     env: ComponentEnv,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    options: Options,
     component: Component<AnyObject, AnyObject>
 ): void => {
-    if (component._dirty) return;
-    component._dirty = true;
-    env.rerenderQueue.push(component);
+    // TODO (#11): 内部処理についての説明を追加する
+    const func = (): void => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        env.prevDebounce = options.debounceRendering;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        (env.prevDebounce || defer)(() => process(env));
+    };
+
+    if (!component._dirty) {
+        component._dirty = true;
+        env.rerenderQueue.push(component);
+        if (
+            !env.rerenderCount++ ||
+            env.prevDebounce !== options.debounceRendering
+        )
+            func();
+        return;
+    }
+
+    if (env.prevDebounce !== options.debounceRendering) func();
 };
 
 export interface ComponentClass<P extends AnyObject, S extends AnyObject> {
@@ -96,7 +146,6 @@ export class Component<P extends AnyObject, S extends AnyObject> {
 
     private nextState: S | null = null;
     private renderCallbacks: Array<() => void> = [];
-    private vnode: any;
 
     // TODO (#2): Add description
     public _dirty = false;
@@ -104,16 +153,21 @@ export class Component<P extends AnyObject, S extends AnyObject> {
     public _pendingError: any;
     // TODO (#4): Add description
     public _processingException: any;
+    public _vnode: any;
     public state: S | null = null;
 
     constructor(
-        private env: ComponentEnv,
         public props: P,
         // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
         public context?: any /* eslint-enable @typescript-eslint/no-explicit-any */
     ) {}
 
-    setState(state: Partial<S> | null, callback?: () => void): void {
+    setState(
+        env: ComponentEnv,
+        options: Options,
+        state: Partial<S> | null,
+        callback?: () => void
+    ): void {
         let s;
         if (this.nextState !== null && this.nextState !== this.state) {
             s = this.nextState;
@@ -122,9 +176,9 @@ export class Component<P extends AnyObject, S extends AnyObject> {
         }
 
         if (state) Object.assign(s, state);
-        if (state === null || !this.vnode) return;
+        if (state === null || !this._vnode) return;
         if (callback !== undefined) this.renderCallbacks.push(callback);
-        enqueueRender(this.env, this);
+        enqueueRender(env, options, this);
     }
 }
 
