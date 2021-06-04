@@ -13,5 +13,3 @@ jobs:
         run: yarn lint
       - name: Run tests
         run: yarn test
-      - name: Validate dependencies
-        run: yarn validate-deps

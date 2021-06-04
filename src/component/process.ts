@@ -1,4 +1,4 @@
-import { ComponentEnv } from './env';
+import type { ComponentEnv } from './env';
 import { renderComponent } from './renderComponent';
 
 /** キューに積まれたすべてのコンポーネントをレンダリングすることで、レンダーキューをフラッシュする */

@@ -7,9 +7,7 @@
     "dev": "esbuild --platform=browser --bundle --outfile=lib/index.js --watch src/index.ts",
     "lint": "eslint . --ext .ts",
     "format": "eslint . --fix --ext .ts",
-    "test": "jest",
-    "validate-deps": "depcruise --config .dependency-cruiser.js src",
-    "gen-dep-graph": "depcruise --config .dependency-cruiser.js -T flat --output-to deps.dot src"
+    "test": "jest"
   },
   "author": "0918nobita <nobita.0918@gmail.com>",
   "license": "MIT",
@@ -17,10 +15,10 @@
     "@types/jest": "26.0.23",
     "@typescript-eslint/eslint-plugin": "4.26.0",
     "@typescript-eslint/parser": "4.26.0",
-    "dependency-cruiser": "10.0.1",
     "esbuild": "0.12.5",
     "eslint": "7.27.0",
     "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-import": "2.23.4",
     "eslint-plugin-prettier": "3.4.0",
     "eslint-plugin-simple-import-sort": "7.0.0",
     "eslint-plugin-todo-plz": "1.2.0",

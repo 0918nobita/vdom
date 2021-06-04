@@ -1,5 +1,5 @@
-import { AnyObject } from '../types';
-import { Component } from './component';
+import type { AnyObject } from '../types';
+import type { Component } from './component';
 
 // TODO (#12): Implement renderComponent function
 export const renderComponent = (

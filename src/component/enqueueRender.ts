@@ -1,7 +1,7 @@
-import { Options } from '../options';
-import { AnyObject } from '../types';
-import { Component } from './component';
-import { ComponentEnv } from './env';
+import type { Options } from '../options';
+import type { AnyObject } from '../types';
+import type { Component } from './component';
+import type { ComponentEnv } from './env';
 import { process } from './process';
 
 const defer =
