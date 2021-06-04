@@ -1,6 +1,6 @@
 import { AnyObject } from './types';
 
-export interface VNode<P> {
+export interface VNode<P extends AnyObject> {
     type: ComponentType<P> | string;
     _component: null | Component<P, AnyObject>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -8,8 +8,7 @@ export interface VNode<P> {
 }
 
 type ComponentChild =
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    | VNode<any>
+    | VNode<AnyObject>
     | AnyObject
     | string
     | number
@@ -51,23 +50,32 @@ interface FunctionComponent<P> {
     defaultProps?: Partial<P>;
 }
 
-type ComponentType<P> = ComponentClass<P, AnyObject> | FunctionComponent<P>;
+type ComponentType<P extends AnyObject> =
+    | ComponentClass<P, AnyObject>
+    | FunctionComponent<P>;
 
-export const rerenderQueue: Array<Component<AnyObject, AnyObject>> = [];
+export interface ComponentEnv {
+    rerenderQueue: Array<Component<AnyObject, AnyObject>>;
+}
+
+export const createEnv = (): ComponentEnv => ({ rerenderQueue: [] });
 
 // TODO (#1): Implement enqueueRender function
 /**
  * コンポーネントの再レンダリングをエンキューする
  * @param component 再レンダリングするコンポーネント
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-function
-export const enqueueRender = (component: Component<any, any>): void => {
+export const enqueueRender = (
+    env: ComponentEnv,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    component: Component<AnyObject, AnyObject>
+): void => {
     if (component._dirty) return;
     component._dirty = true;
-    rerenderQueue.push(component);
+    env.rerenderQueue.push(component);
 };
 
-export interface ComponentClass<P, S> {
+export interface ComponentClass<P extends AnyObject, S extends AnyObject> {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     new (props: P, context: any): Component<P, S>;
     displayName?: string;
@@ -81,7 +89,7 @@ export interface ComponentClass<P, S> {
     /* eslint-enable @typescript-eslint/no-explicit-any */
 }
 
-export class Component<P, S> {
+export class Component<P extends AnyObject, S extends AnyObject> {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     static getDerivedStateFromError?(error: any): AnyObject | null;
@@ -98,9 +106,12 @@ export class Component<P, S> {
     public _processingException: any;
     public state: S | null = null;
 
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    constructor(public props: P, public context?: any) {}
-    /* eslint-enable @typescript-eslint/no-explicit-any */
+    constructor(
+        private env: ComponentEnv,
+        public props: P,
+        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+        public context?: any /* eslint-enable @typescript-eslint/no-explicit-any */
+    ) {}
 
     setState(state: Partial<S> | null, callback?: () => void): void {
         let s;
@@ -113,7 +124,7 @@ export class Component<P, S> {
         if (state) Object.assign(s, state);
         if (state === null || !this.vnode) return;
         if (callback !== undefined) this.renderCallbacks.push(callback);
-        enqueueRender(this);
+        enqueueRender(this.env, this);
     }
 }
 

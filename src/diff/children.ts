@@ -1,4 +1,4 @@
-import { createVNode, Fragment } from '../createElement';
+import { CreateElementEnv, createVNode, Fragment } from '../createElement';
 import { diff } from './index';
 
 // TODO (#6): Implement diffChildren function
@@ -16,18 +16,21 @@ interface DiffChildrenArgs {
     isHydrating: boolean;
     /* eslint-enable @typescript-eslint/no-explicit-any */
 }
-export const diffChildren = ({
-    parentDom,
-    renderResult,
-    newParentVNode,
-    oldParentVNode,
-    globalContext,
-    isSvg,
-    excessDomChildren,
-    commitQueue,
-    oldDom,
-    isHydrating,
-}: DiffChildrenArgs): void => {
+export const diffChildren = (
+    env: CreateElementEnv,
+    {
+        parentDom,
+        renderResult,
+        newParentVNode,
+        oldParentVNode,
+        globalContext,
+        isSvg,
+        excessDomChildren,
+        commitQueue,
+        oldDom,
+        isHydrating,
+    }: DiffChildrenArgs
+): void => {
     let oldVNode /*, newDom, firstChildDom, refs*/;
     /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
     const oldChildren = (oldParentVNode && oldParentVNode._children) || [];
@@ -42,7 +45,7 @@ export const diffChildren = ({
             typeof childVNode === 'number' ||
             typeof childVNode === 'bigint'
         ) {
-            childVNode = newParentVNode._children[i] = createVNode({
+            childVNode = newParentVNode._children[i] = createVNode(env, {
                 type: null,
                 props: childVNode,
                 key: null,
@@ -50,7 +53,7 @@ export const diffChildren = ({
                 original: childVNode,
             });
         } else if (Array.isArray(childVNode)) {
-            childVNode = newParentVNode._children[i] = createVNode({
+            childVNode = newParentVNode._children[i] = createVNode(env, {
                 type: Fragment,
                 props: { children: childVNode },
                 key: null,
@@ -58,7 +61,7 @@ export const diffChildren = ({
                 original: null,
             });
         } else if (childVNode._depth > 0) {
-            childVNode = newParentVNode._children[i] = createVNode({
+            childVNode = newParentVNode._children[i] = createVNode(env, {
                 type: childVNode.type,
                 props: childVNode.props,
                 key: childVNode.key,

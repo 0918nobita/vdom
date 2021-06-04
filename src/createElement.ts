@@ -1,24 +1,30 @@
 import { ComponentClass } from './component';
-import { options } from './options';
+import { Options } from './options';
 import { EmptyObject } from './types';
 
-let vnodeId = 0;
+export interface CreateElementEnv {
+    vnodeId: number;
+}
+
+export const createEnv = (): CreateElementEnv => ({ vnodeId: 0 });
 
 // TODO (#10): Make the type more precise
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface CreateVNodeArgs {
-    type: any;
-    props: any;
-    key: any;
-    ref: any;
-    original: any;
+    env: CreateElementEnv;
+    options: Options;
+    vnode: {
+        type: any;
+        props: any;
+        key: any;
+        ref: any;
+        original: any;
+    };
 }
 export const createVNode = ({
-    type,
-    props,
-    key,
-    ref,
-    original,
+    env,
+    options,
+    vnode: { type, props, key, ref, original },
 }: CreateVNodeArgs): any => {
     /* eslint-enable @typescript-eslint/no-explicit-any */
     const vnode = {
@@ -35,7 +41,7 @@ export const createVNode = ({
         _component: null,
         _hydrating: null,
         constructor: undefined,
-        _original: original ?? ++vnodeId,
+        _original: original ?? ++env.vnodeId,
         /* eslint-enable @typescript-eslint/no-unsafe-assignment */
     };
     if (options.vnode) options.vnode(vnode);

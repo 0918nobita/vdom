@@ -1,4 +1,4 @@
-import { Component, VNode } from '../component';
+import { Component, createEnv, VNode } from '../component';
 import { AnyObject, EmptyObject } from '../types';
 import { _catchError } from './catchError';
 
@@ -21,7 +21,8 @@ it('_catchError (componentDidCatch)', () => {
         .fn()
         .mockName('componentDidCatch');
 
-    const component = new Component<EmptyObject, EmptyObject>({});
+    const env = createEnv();
+    const component = new Component<EmptyObject, EmptyObject>(env, {});
     component.componentDidCatch = componentDidCatch;
 
     const vnode: VNode<AnyObject> = {
