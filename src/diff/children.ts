@@ -1,5 +1,5 @@
 import { CreateElementEnv, createVNode, Fragment } from '../createElement';
-import { Options } from '../options';
+import type { Options } from '../options';
 import { diff } from './index';
 
 // TODO (#6): Implement diffChildren function

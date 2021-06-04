@@ -1,4 +1,4 @@
-import { ComponentChildren, FunctionComponent } from './component';
+import type { ComponentChildren, FunctionComponent } from './component';
 
 type Consumer<T> = FunctionComponent<{
     children: (value: T) => ComponentChildren;

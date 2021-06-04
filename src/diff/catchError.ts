@@ -1,5 +1,5 @@
 import { Component, ComponentEnv, VNode } from '../component';
-import { Options } from '../options';
+import type { Options } from '../options';
 import { AnyObject } from '../types';
 
 /** 最も近いエラー境界を見つけ、エラーを投げた上でそれを呼び出す */

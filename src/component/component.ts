@@ -1,10 +1,10 @@
-import { Options } from '../options';
-import { AnyObject } from '../types';
-import { Context } from './context';
+import type { Options } from '../options';
+import type { AnyObject } from '../types';
+import type { Context } from './context';
 import { enqueueRender } from './enqueueRender';
-import { ComponentEnv } from './env';
-import { Ref } from './ref';
-import { VNode } from './vnode';
+import type { ComponentEnv } from './env';
+import type { Ref } from './ref';
+import type { VNode } from './vnode';
 
 type ComponentChild =
     | VNode<AnyObject>

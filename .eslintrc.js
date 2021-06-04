@@ -1,9 +1,15 @@
 module.exports = {
     root: true,
     env: { browser: true, es6: true, node: true },
-    extends: ['eslint:recommended', 'plugin:prettier/recommended'],
-    plugins: ['simple-import-sort', 'todo-plz'],
+    extends: [
+        'eslint:recommended',
+        'plugin:import/recommended',
+        'plugin:prettier/recommended',
+        'prettier',
+    ],
+    plugins: ['import', 'simple-import-sort', 'todo-plz'],
     rules: {
+        'import/no-cycle': 'error',
         'simple-import-sort/imports': 'error',
         'todo-plz/ticket-ref': ['error', { pattern: '#[0-9]+' }],
     },
@@ -14,7 +20,7 @@ module.exports = {
             extends: [
                 'plugin:@typescript-eslint/recommended',
                 'plugin:@typescript-eslint/recommended-requiring-type-checking',
-                'prettier',
+                'plugin:import/typescript',
             ],
             plugins: ['@typescript-eslint'],
             parser: '@typescript-eslint/parser',
