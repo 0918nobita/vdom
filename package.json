@@ -2,6 +2,9 @@
   "name": "vdom",
   "version": "0.1.0",
   "description": "Virtual DOM implementation",
+  "type": "commonjs",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "build": "esbuild --platform=browser --bundle --minify --outfile=lib/index.js src/index.ts",
     "dev": "esbuild --platform=browser --bundle --outfile=lib/index.js --watch src/index.ts",
