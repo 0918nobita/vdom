@@ -2,9 +2,10 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "commonjs",
+    "declaration": true,
+    "emitDeclarationOnly": true,
     "outDir": "./lib",
     "rootDir": "./src",
-    "noEmit": true,
     "locale": "ja",
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
