@@ -1,10 +1,9 @@
-import type { AnyObject } from '../types';
 import type { IComponent } from './component';
 
 export interface ComponentEnv {
     prevDebounce: ((proc: () => void) => void) | null;
     rerenderCount: number;
-    rerenderQueue: Array<IComponent<AnyObject, AnyObject>>;
+    rerenderQueue: Array<IComponent>;
 }
 
 export const createEnv = (): ComponentEnv => ({

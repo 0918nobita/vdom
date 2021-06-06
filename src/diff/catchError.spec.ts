@@ -1,7 +1,7 @@
 import type { IComponent, VNode } from '../component';
 import { Component, createEnv } from '../component';
 import { createOptions } from '../options';
-import type { AnyObject, EmptyObject } from '../types';
+import type { EmptyObject } from '../types';
 import { catchError } from './catchError';
 
 const createCommonConfig = () => ({
@@ -31,7 +31,7 @@ describe('_catchError', () => {
             .mockName('componentDidCatch');
         const component: IComponent = new Component({});
         component.componentDidCatch = componentDidCatch;
-        const vnode: VNode<AnyObject> = {
+        const vnode: VNode = {
             type: 'button',
             component: null,
             parent: { type: 'div', component, parent: null, depth: null },

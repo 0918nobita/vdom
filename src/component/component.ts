@@ -7,7 +7,7 @@ import type { Ref } from './ref';
 import type { VNode } from './vnode';
 
 type ComponentChild =
-    | VNode<AnyObject>
+    | VNode
     | AnyObject
     | string
     | number

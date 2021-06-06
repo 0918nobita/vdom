@@ -1,5 +1,4 @@
 import type { Options } from '../options';
-import type { AnyObject } from '../types';
 import type { Component } from './component';
 import type { ComponentEnv } from './env';
 import { process } from './process';
@@ -16,7 +15,7 @@ const defer =
 export const enqueueRender = (
     env: ComponentEnv,
     options: Options,
-    component: Component<AnyObject, AnyObject>
+    component: Component
 ): void => {
     // TODO (#11): 内部処理についての説明を追加する
     const proc = (): void => {

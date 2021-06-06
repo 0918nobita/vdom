@@ -1,6 +1,5 @@
 import type { Component, ComponentEnv, IComponent, VNode } from '../component';
 import type { Options } from '../options';
-import type { AnyObject } from '../types';
 
 interface CatchErrorArgs {
     env: ComponentEnv;
@@ -15,7 +14,7 @@ export const catchError = ({
     error,
     options,
     vnode,
-}: CatchErrorArgs): never | IComponent<AnyObject, AnyObject> => {
+}: CatchErrorArgs): never | IComponent => {
     for (; vnode.parent && (vnode = vnode.parent); ) {
         const { component } = vnode;
 
