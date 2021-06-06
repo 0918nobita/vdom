@@ -6,11 +6,10 @@ export const process = (env: ComponentEnv): void => {
     // TODO (#13): 内部処理についての説明を追加する
     while ((env.rerenderCount = env.rerenderQueue.length)) {
         const queue = env.rerenderQueue.sort(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            (a, b) => a.vnode._depth - b.vnode._depth
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            (a, b) => a.vnode!.depth! - b.vnode!.depth!
         );
         env.rerenderQueue = [];
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         for (const c of queue) if (c.dirty) renderComponent(c);
     }
 };

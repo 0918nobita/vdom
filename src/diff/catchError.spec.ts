@@ -1,6 +1,4 @@
-import * as fc from 'fast-check';
-
-import type { VNode } from '../component';
+import type { IComponent, VNode } from '../component';
 import { Component, createEnv } from '../component';
 import { createOptions } from '../options';
 import type { AnyObject, EmptyObject } from '../types';
@@ -11,18 +9,15 @@ const createCommonConfig = () => ({
     options: createOptions(),
 });
 
-it('property-based', () => {
-    fc.assert(fc.property(fc.array(fc.integer()), () => true));
-});
-
 describe('_catchError', () => {
     it('when _parent is null', () => {
         const { env, options } = createCommonConfig();
         const error = new Error();
-        const vnode: VNode<AnyObject> = {
+        const vnode: VNode = {
             type: 'div',
             component: null,
             parent: null,
+            depth: null,
         };
         expect(() => catchError({ env, options, error, vnode })).toThrowError();
     });
@@ -34,12 +29,13 @@ describe('_catchError', () => {
         const componentDidCatch: jest.Mock<void, [Error]> = jest
             .fn()
             .mockName('componentDidCatch');
-        const component = new Component<EmptyObject, EmptyObject>({});
+        const component: IComponent = new Component({});
         component.componentDidCatch = componentDidCatch;
         const vnode: VNode<AnyObject> = {
             type: 'button',
             component: null,
-            parent: { type: 'div', component, parent: null },
+            parent: { type: 'div', component, parent: null, depth: null },
+            depth: null,
         };
         expect(() => catchError({ env, options, error, vnode })).toThrowError();
         expect(componentDidCatch).toBeCalledTimes(1);
@@ -48,10 +44,11 @@ describe('_catchError', () => {
     it('when _parent._component is null', () => {
         const { env, options } = createCommonConfig();
         const error = new Error();
-        const vnode: VNode<AnyObject> = {
+        const vnode: VNode = {
             type: 'button',
             component: null,
-            parent: { type: 'div', component: null, parent: null },
+            parent: { type: 'div', component: null, parent: null, depth: null },
+            depth: null,
         };
         expect(() => catchError({ env, options, error, vnode })).toThrowError();
     });
@@ -59,12 +56,13 @@ describe('_catchError', () => {
     it('when _parent._component._processingException is true', () => {
         const { env, options } = createCommonConfig();
         const error = new Error();
-        const component = new Component<EmptyObject, EmptyObject>({});
+        const component: IComponent = new Component({});
         component.processingException = true;
-        const vnode: VNode<AnyObject> = {
+        const vnode: VNode = {
             type: 'button',
             component: null,
-            parent: { type: 'div', component, parent: null },
+            parent: { type: 'div', component, parent: null, depth: null },
+            depth: null,
         };
         expect(() => catchError({ env, options, error, vnode })).toThrowError();
     });
@@ -85,10 +83,11 @@ describe('_catchError', () => {
         >({});
         const setState = jest.fn().mockName('setState');
         component.setState = setState;
-        const vnode: VNode<AnyObject> = {
+        const vnode: VNode = {
             type: 'button',
             component: null,
-            parent: { type: 'div', component, parent: null },
+            parent: { type: 'div', component, parent: null, depth: null },
+            depth: null,
         };
         expect(() => catchError({ env, options, error, vnode })).toThrowError();
         expect(getDerivedStateFromError).toBeCalledTimes(1);
@@ -115,10 +114,11 @@ describe('_catchError', () => {
         >({});
         const setState = jest.fn().mockName('setState');
         component.setState = setState;
-        const vnode: VNode<AnyObject> = {
+        const vnode: VNode = {
             type: 'button',
             component: null,
-            parent: { type: 'div', component, parent: null },
+            parent: { type: 'div', component, parent: null, depth: null },
+            depth: null,
         };
         expect(() => catchError({ env, options, error, vnode })).toThrowError();
         expect(getDerivedStateFromError).toBeCalledTimes(1);
@@ -139,10 +139,11 @@ describe('_catchError', () => {
         component.setState = jest.fn().mockImplementation(() => {
             throw error2;
         });
-        const vnode: VNode<AnyObject> = {
+        const vnode: VNode = {
             type: 'button',
             component: null,
-            parent: { type: 'div', component, parent: null },
+            parent: { type: 'div', component, parent: null, depth: null },
+            depth: null,
         };
         expect(() =>
             catchError({ env, options, error: error1, vnode })
@@ -156,10 +157,11 @@ describe('_catchError', () => {
         componentClass.getDerivedStateFromError = jest.fn();
         const component = new componentClass({});
         component.dirty = true;
-        const vnode: VNode<AnyObject> = {
+        const vnode: VNode = {
             type: 'button',
             component: null,
-            parent: { type: 'div', component, parent: null },
+            parent: { type: 'div', component, parent: null, depth: null },
+            depth: null,
         };
         expect(() => catchError({ env, options, error, vnode })).not.toThrow();
         expect(component.pendingError).toBeTruthy();

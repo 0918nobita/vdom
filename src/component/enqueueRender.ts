@@ -19,10 +19,8 @@ export const enqueueRender = (
     component: Component<AnyObject, AnyObject>
 ): void => {
     // TODO (#11): 内部処理についての説明を追加する
-    const func = (): void => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const proc = (): void => {
         env.prevDebounce = options.debounceRendering;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         void (env.prevDebounce || defer)(() => process(env));
     };
 
@@ -33,9 +31,9 @@ export const enqueueRender = (
             !env.rerenderCount++ ||
             env.prevDebounce !== options.debounceRendering
         )
-            func();
+            proc();
         return;
     }
 
-    if (env.prevDebounce !== options.debounceRendering) func();
+    if (env.prevDebounce !== options.debounceRendering) proc();
 };

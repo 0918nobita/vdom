@@ -1,4 +1,4 @@
-import type { Component, ComponentEnv, VNode } from '../component';
+import type { Component, ComponentEnv, IComponent, VNode } from '../component';
 import type { Options } from '../options';
 import type { AnyObject } from '../types';
 
@@ -6,7 +6,7 @@ interface CatchErrorArgs {
     env: ComponentEnv;
     error: unknown;
     options: Options;
-    vnode: VNode<AnyObject>;
+    vnode: VNode;
 }
 
 /** 最も近いエラー境界を見つけ、エラーを投げた上でそれを呼び出す */
@@ -15,7 +15,7 @@ export const catchError = ({
     error,
     options,
     vnode,
-}: CatchErrorArgs): never | Component<AnyObject, AnyObject> => {
+}: CatchErrorArgs): never | IComponent<AnyObject, AnyObject> => {
     for (; vnode.parent && (vnode = vnode.parent); ) {
         const { component } = vnode;
 
@@ -29,7 +29,7 @@ export const catchError = ({
                 component.setState(
                     env,
                     options,
-                    ctor.getDerivedStateFromError(error)
+                    ctor.getDerivedStateFromError(error) ?? {}
                 );
                 handled = component.dirty;
             }

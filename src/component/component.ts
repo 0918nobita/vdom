@@ -39,7 +39,7 @@ export type ComponentType<P extends AnyObject> =
 
 export interface ComponentClass<P extends AnyObject, S extends AnyObject> {
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    new (props: P, context: any): Component<P, S>;
+    new (props: P, context: any): IComponent<P, S>;
     displayName?: string;
     defaultProps?: Partial<P>;
     contextType?: Context<any>;
@@ -51,50 +51,23 @@ export interface ComponentClass<P extends AnyObject, S extends AnyObject> {
     /* eslint-enable @typescript-eslint/no-explicit-any */
 }
 
-export class Component<P extends AnyObject, S extends AnyObject> {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    static getDerivedStateFromError?(error: any): AnyObject | null;
-
-    private nextState: S | null = null;
-    private renderCallbacks: Array<() => void> = [];
-
-    // TODO (#2): Add description
-    public dirty = false;
-    // TODO (#3): Add description
-    public pendingError: any;
-    // TODO (#4): Add description
-    public processingException: any;
-    public vnode: any;
-    public state: S | null = null;
-
-    constructor(
-        public props: P,
-        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-        public context?: any /* eslint-enable @typescript-eslint/no-explicit-any */
-    ) {}
+export interface IComponent<
+    P extends AnyObject = AnyObject,
+    S extends AnyObject = AnyObject
+> {
+    dirty: boolean;
+    pendingError: unknown;
+    processingException: unknown;
+    state: S | null;
+    vnode: VNode<P> | null;
 
     setState(
         env: ComponentEnv,
         options: Options,
-        state: Partial<S> | null,
+        state: Partial<S>,
         callback?: () => void
-    ): void {
-        let s;
-        if (this.nextState !== null && this.nextState !== this.state) {
-            s = this.nextState;
-        } else {
-            s = this.nextState = Object.assign({}, this.state);
-        }
+    ): void;
 
-        if (state) Object.assign(s, state);
-        if (state === null || !this.vnode) return;
-        if (callback !== undefined) this.renderCallbacks.push(callback);
-        enqueueRender(env, options, this);
-    }
-}
-
-export interface Component<P, S> {
     componentWillMount?(): void;
     componentDidMount?(): void;
 
@@ -102,22 +75,58 @@ export interface Component<P, S> {
 
     getChildContext?(): AnyObject;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    componentWillReceiveProps?(nextProps: Readonly<P>, nextContext: any): void;
+    componentWillReceiveProps?(
+        nextProps: Readonly<P>,
+        nextContext: unknown
+    ): void;
 
     shouldComponentUpdate?(
         nextProps: Readonly<P>,
         nextState: Readonly<S>,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        nextContext: any
+        nextContext: unknown
     ): boolean;
     componentWillUpdate?(
         previousProps: Readonly<P>,
         previousState: Readonly<S>,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        snapshot: any
+        snapshot: unknown
     ): void;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    componentDidCatch?(error: any, errorInfo?: any): void;
+    componentDidCatch?(error: unknown, errorInfo?: unknown): void;
+}
+
+export class Component<
+    P extends AnyObject = AnyObject,
+    S extends AnyObject = AnyObject
+> implements IComponent<P, S>
+{
+    static getDerivedStateFromError?(error: unknown): AnyObject | null;
+
+    #nextState: S | null = null;
+    #renderCallbacks: Array<() => void> = [];
+
+    // TODO (#2): Add description
+    dirty = false;
+    // TODO (#3): Add description
+    pendingError: unknown;
+    // TODO (#4): Add description
+    processingException: unknown;
+    vnode = null;
+    state = null;
+
+    constructor(public props: P, public context?: unknown) {}
+
+    setState(
+        env: ComponentEnv,
+        options: Options,
+        state: Partial<S> | null,
+        callback?: () => void
+    ): void {
+        if (this.#nextState === null || this.#nextState === this.state)
+            this.#nextState = Object.assign({}, this.state);
+
+        if (state) Object.assign(this.#nextState, state);
+        if (state === null || !this.vnode) return;
+        if (callback !== undefined) this.#renderCallbacks.push(callback);
+        enqueueRender(env, options, this);
+    }
 }

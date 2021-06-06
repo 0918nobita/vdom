@@ -1,8 +1,9 @@
 import type { AnyObject } from '../types';
-import type { Component, ComponentType } from './component';
+import type { ComponentType, IComponent } from './component';
 
-export interface VNode<P extends AnyObject> {
+export interface VNode<P extends AnyObject = AnyObject> {
     type: ComponentType<P> | string;
-    component: null | Component<P, AnyObject>;
+    component: null | IComponent<P, AnyObject>;
     parent: VNode<AnyObject> | null;
+    depth: number | null;
 }
