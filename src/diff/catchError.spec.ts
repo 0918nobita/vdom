@@ -1,12 +1,18 @@
+import * as fc from 'fast-check';
+
 import type { VNode } from '../component';
 import { Component, createEnv } from '../component';
 import { createOptions } from '../options';
 import type { AnyObject, EmptyObject } from '../types';
-import { _catchError } from './catchError';
+import { catchError } from './catchError';
 
 const createCommonConfig = () => ({
     env: createEnv(),
     options: createOptions(),
+});
+
+it('property-based', () => {
+    fc.assert(fc.property(fc.array(fc.integer()), () => true));
 });
 
 describe('_catchError', () => {
@@ -15,10 +21,10 @@ describe('_catchError', () => {
         const error = new Error();
         const vnode: VNode<AnyObject> = {
             type: 'div',
-            _component: null,
-            _parent: null,
+            component: null,
+            parent: null,
         };
-        expect(() => _catchError(env, options, error, vnode)).toThrowError();
+        expect(() => catchError({ env, options, error, vnode })).toThrowError();
     });
 
     it('when component.componentDidCatch is defined', () => {
@@ -32,10 +38,10 @@ describe('_catchError', () => {
         component.componentDidCatch = componentDidCatch;
         const vnode: VNode<AnyObject> = {
             type: 'button',
-            _component: null,
-            _parent: { type: 'div', _component: component, _parent: null },
+            component: null,
+            parent: { type: 'div', component, parent: null },
         };
-        expect(() => _catchError(env, options, error, vnode)).toThrowError();
+        expect(() => catchError({ env, options, error, vnode })).toThrowError();
         expect(componentDidCatch).toBeCalledTimes(1);
     });
 
@@ -44,23 +50,23 @@ describe('_catchError', () => {
         const error = new Error();
         const vnode: VNode<AnyObject> = {
             type: 'button',
-            _component: null,
-            _parent: { type: 'div', _component: null, _parent: null },
+            component: null,
+            parent: { type: 'div', component: null, parent: null },
         };
-        expect(() => _catchError(env, options, error, vnode)).toThrowError();
+        expect(() => catchError({ env, options, error, vnode })).toThrowError();
     });
 
     it('when _parent._component._processingException is true', () => {
         const { env, options } = createCommonConfig();
         const error = new Error();
         const component = new Component<EmptyObject, EmptyObject>({});
-        component._processingException = true;
+        component.processingException = true;
         const vnode: VNode<AnyObject> = {
             type: 'button',
-            _component: null,
-            _parent: { type: 'div', _component: component, _parent: null },
+            component: null,
+            parent: { type: 'div', component, parent: null },
         };
-        expect(() => _catchError(env, options, error, vnode)).toThrowError();
+        expect(() => catchError({ env, options, error, vnode })).toThrowError();
     });
 
     it('when ctor.getDerivedStateFromError is defined', () => {
@@ -81,10 +87,10 @@ describe('_catchError', () => {
         component.setState = setState;
         const vnode: VNode<AnyObject> = {
             type: 'button',
-            _component: null,
-            _parent: { type: 'div', _component: component, _parent: null },
+            component: null,
+            parent: { type: 'div', component, parent: null },
         };
-        expect(() => _catchError(env, options, error, vnode)).toThrowError();
+        expect(() => catchError({ env, options, error, vnode })).toThrowError();
         expect(getDerivedStateFromError).toBeCalledTimes(1);
         expect(setState).toBeCalledTimes(1);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -111,10 +117,10 @@ describe('_catchError', () => {
         component.setState = setState;
         const vnode: VNode<AnyObject> = {
             type: 'button',
-            _component: null,
-            _parent: { type: 'div', _component: component, _parent: null },
+            component: null,
+            parent: { type: 'div', component, parent: null },
         };
-        expect(() => _catchError(env, options, error, vnode)).toThrowError();
+        expect(() => catchError({ env, options, error, vnode })).toThrowError();
         expect(getDerivedStateFromError).toBeCalledTimes(1);
         expect(setState).toBeCalledTimes(1);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -135,12 +141,12 @@ describe('_catchError', () => {
         });
         const vnode: VNode<AnyObject> = {
             type: 'button',
-            _component: null,
-            _parent: { type: 'div', _component: component, _parent: null },
+            component: null,
+            parent: { type: 'div', component, parent: null },
         };
-        expect(() => _catchError(env, options, error1, vnode)).toThrowError(
-            '2'
-        );
+        expect(() =>
+            catchError({ env, options, error: error1, vnode })
+        ).toThrowError('2');
     });
 
     it('when component._dirty is true', () => {
@@ -149,13 +155,13 @@ describe('_catchError', () => {
         const componentClass = Component;
         componentClass.getDerivedStateFromError = jest.fn();
         const component = new componentClass({});
-        component._dirty = true;
+        component.dirty = true;
         const vnode: VNode<AnyObject> = {
             type: 'button',
-            _component: null,
-            _parent: { type: 'div', _component: component, _parent: null },
+            component: null,
+            parent: { type: 'div', component, parent: null },
         };
-        expect(() => _catchError(env, options, error, vnode)).not.toThrow();
-        expect(component._pendingError).toBeTruthy();
+        expect(() => catchError({ env, options, error, vnode })).not.toThrow();
+        expect(component.pendingError).toBeTruthy();
     });
 });

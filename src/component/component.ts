@@ -60,12 +60,12 @@ export class Component<P extends AnyObject, S extends AnyObject> {
     private renderCallbacks: Array<() => void> = [];
 
     // TODO (#2): Add description
-    public _dirty = false;
+    public dirty = false;
     // TODO (#3): Add description
-    public _pendingError: any;
+    public pendingError: any;
     // TODO (#4): Add description
-    public _processingException: any;
-    public _vnode: any;
+    public processingException: any;
+    public vnode: any;
     public state: S | null = null;
 
     constructor(
@@ -88,7 +88,7 @@ export class Component<P extends AnyObject, S extends AnyObject> {
         }
 
         if (state) Object.assign(s, state);
-        if (state === null || !this._vnode) return;
+        if (state === null || !this.vnode) return;
         if (callback !== undefined) this.renderCallbacks.push(callback);
         enqueueRender(env, options, this);
     }

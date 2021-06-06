@@ -33,15 +33,15 @@ export const createVNode = ({
         props,
         key,
         ref,
-        _children: null,
-        _parent: null,
-        _depth: 0,
-        _dom: null,
-        _nextDom: undefined,
-        _component: null,
-        _hydrating: null,
+        children: null,
+        parent: null,
+        depth: 0,
+        dom: null,
+        nextDom: undefined,
+        component: null,
+        hydrating: null,
         constructor: undefined,
-        _original: original ?? ++env.vnodeId,
+        original: original ?? ++env.vnodeId,
         /* eslint-enable @typescript-eslint/no-unsafe-assignment */
     };
     if (options.vnode) options.vnode(vnode);

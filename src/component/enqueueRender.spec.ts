@@ -13,6 +13,6 @@ it('enqueueRender', () => {
     const component = new Component({});
     enqueueRender(env, options, component);
     expect(env.rerenderCount).toBe(1);
-    expect(component._dirty).toBe(true);
+    expect(component.dirty).toBe(true);
     expect(env.rerenderQueue[0]).toBe(component);
 });
