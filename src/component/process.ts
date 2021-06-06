@@ -7,10 +7,10 @@ export const process = (env: ComponentEnv): void => {
     while ((env.rerenderCount = env.rerenderQueue.length)) {
         const queue = env.rerenderQueue.sort(
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            (a, b) => a._vnode._depth - b._vnode._depth
+            (a, b) => a.vnode._depth - b.vnode._depth
         );
         env.rerenderQueue = [];
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        for (const c of queue) if (c._dirty) renderComponent(c);
+        for (const c of queue) if (c.dirty) renderComponent(c);
     }
 };

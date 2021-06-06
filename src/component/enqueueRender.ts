@@ -23,11 +23,11 @@ export const enqueueRender = (
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         env.prevDebounce = options.debounceRendering;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        (env.prevDebounce || defer)(() => process(env));
+        void (env.prevDebounce || defer)(() => process(env));
     };
 
-    if (!component._dirty) {
-        component._dirty = true;
+    if (!component.dirty) {
+        component.dirty = true;
         env.rerenderQueue.push(component);
         if (
             !env.rerenderCount++ ||

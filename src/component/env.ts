@@ -2,8 +2,7 @@ import type { AnyObject } from '../types';
 import type { Component } from './component';
 
 export interface ComponentEnv {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    prevDebounce: any;
+    prevDebounce: ((proc: () => void) => void) | null;
     rerenderCount: number;
     rerenderQueue: Array<Component<AnyObject, AnyObject>>;
 }
