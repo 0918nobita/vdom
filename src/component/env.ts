@@ -3,7 +3,7 @@ import type { IComponent } from './component';
 export interface ComponentEnv {
     prevDebounce: ((proc: () => void) => void) | null;
     rerenderCount: number;
-    rerenderQueue: Array<IComponent>;
+    rerenderQueue: IComponent[];
 }
 
 export const createEnv = (): ComponentEnv => ({
