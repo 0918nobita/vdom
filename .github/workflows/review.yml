@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: Review using ESLint
         uses: reviewdog/action-eslint@v1
         with:
@@ -17,8 +20,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Review using Jest
-        uses: ArtiomTr/jest-coverage-report-action@v1.3
+      - uses: actions/setup-node@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          threshold: 80
+          node-version: '14'
+      - name: Install dependencies
+        run: yarn
+      - name: Run tests and collect coverage
+        run: |
+          yarn test --coverage --coverageReporters json-summary
+          node scripts/formatCoverageReport.js
+      - name: Comment on the pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          URL: ${{ github.event.pull_request.comments_url }}
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${GITHUB_TOKEN}" \
+            -d "@prComment.json" \
+            ${URL}

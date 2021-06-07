@@ -29,6 +29,10 @@ module.exports = {
                 project: './tsconfig.json',
             },
             rules: {
+                '@typescript-eslint/array-type': [
+                    'error',
+                    { default: 'array-simple', readonly: 'array-simple' },
+                ],
                 '@typescript-eslint/consistent-type-imports': 'error',
                 '@typescript-eslint/no-unnecessary-type-arguments': 'error',
             },
