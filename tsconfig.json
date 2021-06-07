@@ -2,10 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "commonjs",
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "outDir": "./lib",
-    "rootDir": "./src",
+    "noEmit": true,
     "locale": "ja",
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -18,5 +15,9 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "esModuleInterop": true
-  }
+  },
+  "include": [
+    "scripts",
+    "src"
+  ]
 }

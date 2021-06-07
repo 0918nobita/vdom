@@ -27,8 +27,8 @@ jobs:
         run: yarn
       - name: Run tests and collect coverage
         run: |
-          yarn test --coverage --coverageReporters json-summary
-          node scripts/formatCoverageReport.js
+          yarn test:coverage
+          yarn ts-node scripts/formatCoverageReport.ts
       - name: Comment on the pull request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
