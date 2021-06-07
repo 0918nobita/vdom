@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: Review using ESLint
         uses: reviewdog/action-eslint@v1
         with:
@@ -17,6 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: Review using Jest
         uses: ArtiomTr/jest-coverage-report-action@v1.3
         with:
