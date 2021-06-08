@@ -2,15 +2,15 @@ import type { ComponentClass, VNode } from './component';
 import type { Options } from './options';
 import type { AnyObject } from './types';
 
-export interface CreateElementEnv {
+export interface ElementCreationEnv {
     vnodeId: number;
 }
 
-export const createEnv = (): CreateElementEnv => ({ vnodeId: 0 });
+export const createEnv = (): ElementCreationEnv => ({ vnodeId: 0 });
 
 // TODO (#10): Make the type more precise
 interface CreateVNodeArgs {
-    env: CreateElementEnv;
+    env: ElementCreationEnv;
     options: Options;
     vnode: Pick<VNode, 'type' | 'props' | 'key' | 'ref'> & {
         original: number | null;
