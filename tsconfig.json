@@ -15,9 +15,5 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "esModuleInterop": true
-  },
-  "include": [
-    "scripts",
-    "src"
-  ]
+  }
 }
