@@ -1,3 +1,5 @@
+import * as fc from 'fast-check';
+
 import type { IComponent, VNode } from '../component';
 import { Component, createEnv } from '../component';
 import { createOptions } from '../options';
@@ -9,15 +11,28 @@ const createCommonConfig = () => ({
     options: createOptions(),
 });
 
+describe('boolean', () => {
+    fc.assert(fc.property(fc.boolean(), (flag) => flag || !flag));
+});
+
 describe('_catchError', () => {
     it('when _parent is null', () => {
         const { env, options } = createCommonConfig();
         const error = new Error();
         const vnode: VNode = {
             type: 'div',
+            props: { children: [] },
+            key: null,
+            ref: null,
+            children: [],
             component: null,
             parent: null,
-            depth: null,
+            depth: 0,
+            dom: null,
+            nextDom: null,
+            hydrating: null,
+            constructor: undefined,
+            original: 0,
         };
         expect(() => catchError({ env, options, error, vnode })).toThrowError();
     });
@@ -33,9 +48,32 @@ describe('_catchError', () => {
         component.componentDidCatch = componentDidCatch;
         const vnode: VNode = {
             type: 'button',
+            props: { children: [] },
+            key: null,
+            ref: null,
             component: null,
-            parent: { type: 'div', component, parent: null, depth: null },
-            depth: null,
+            children: [],
+            parent: {
+                type: 'div',
+                props: { children: [] },
+                key: null,
+                ref: null,
+                children: [],
+                component,
+                parent: null,
+                depth: 0,
+                dom: null,
+                nextDom: null,
+                hydrating: null,
+                constructor: undefined,
+                original: 0,
+            },
+            depth: 0,
+            dom: null,
+            nextDom: null,
+            hydrating: null,
+            constructor: undefined,
+            original: 0,
         };
         expect(() => catchError({ env, options, error, vnode })).toThrowError();
         expect(componentDidCatch).toBeCalledTimes(1);
@@ -46,9 +84,32 @@ describe('_catchError', () => {
         const error = new Error();
         const vnode: VNode = {
             type: 'button',
+            props: { children: [] },
             component: null,
-            parent: { type: 'div', component: null, parent: null, depth: null },
-            depth: null,
+            key: null,
+            ref: null,
+            children: [],
+            parent: {
+                type: 'div',
+                props: { children: [] },
+                key: null,
+                ref: null,
+                children: [],
+                component: null,
+                parent: null,
+                depth: 0,
+                dom: null,
+                nextDom: null,
+                hydrating: null,
+                constructor: undefined,
+                original: 0,
+            },
+            depth: 0,
+            dom: null,
+            nextDom: null,
+            hydrating: null,
+            constructor: undefined,
+            original: 0,
         };
         expect(() => catchError({ env, options, error, vnode })).toThrowError();
     });
@@ -60,9 +121,32 @@ describe('_catchError', () => {
         component.processingException = true;
         const vnode: VNode = {
             type: 'button',
+            props: { children: [] },
+            key: null,
+            ref: null,
             component: null,
-            parent: { type: 'div', component, parent: null, depth: null },
-            depth: null,
+            children: [],
+            parent: {
+                type: 'div',
+                props: { children: [] },
+                key: null,
+                ref: null,
+                children: [],
+                component,
+                parent: null,
+                depth: 0,
+                dom: null,
+                nextDom: null,
+                hydrating: null,
+                constructor: undefined,
+                original: 0,
+            },
+            depth: 0,
+            dom: null,
+            nextDom: null,
+            hydrating: null,
+            constructor: undefined,
+            original: 0,
         };
         expect(() => catchError({ env, options, error, vnode })).toThrowError();
     });
@@ -85,9 +169,32 @@ describe('_catchError', () => {
         component.setState = setState;
         const vnode: VNode = {
             type: 'button',
+            props: { children: [] },
+            key: null,
+            ref: null,
             component: null,
-            parent: { type: 'div', component, parent: null, depth: null },
-            depth: null,
+            children: [],
+            parent: {
+                type: 'div',
+                props: { children: [] },
+                key: null,
+                ref: null,
+                component,
+                children: [],
+                parent: null,
+                depth: 0,
+                dom: null,
+                nextDom: null,
+                hydrating: null,
+                constructor: undefined,
+                original: 0,
+            },
+            depth: 0,
+            dom: null,
+            nextDom: null,
+            hydrating: null,
+            constructor: undefined,
+            original: 0,
         };
         expect(() => catchError({ env, options, error, vnode })).toThrowError();
         expect(getDerivedStateFromError).toBeCalledTimes(1);
@@ -116,9 +223,32 @@ describe('_catchError', () => {
         component.setState = setState;
         const vnode: VNode = {
             type: 'button',
+            props: { children: [] },
+            key: null,
+            ref: null,
+            children: [],
             component: null,
-            parent: { type: 'div', component, parent: null, depth: null },
-            depth: null,
+            parent: {
+                type: 'div',
+                props: { children: [] },
+                key: null,
+                ref: null,
+                children: [],
+                component,
+                parent: null,
+                depth: 0,
+                dom: null,
+                nextDom: null,
+                hydrating: null,
+                constructor: undefined,
+                original: 0,
+            },
+            depth: 0,
+            dom: null,
+            nextDom: null,
+            hydrating: null,
+            constructor: undefined,
+            original: 0,
         };
         expect(() => catchError({ env, options, error, vnode })).toThrowError();
         expect(getDerivedStateFromError).toBeCalledTimes(1);
@@ -141,9 +271,32 @@ describe('_catchError', () => {
         });
         const vnode: VNode = {
             type: 'button',
+            props: { children: [] },
+            key: null,
+            ref: null,
+            children: [],
             component: null,
-            parent: { type: 'div', component, parent: null, depth: null },
-            depth: null,
+            parent: {
+                type: 'div',
+                props: { children: [] },
+                key: null,
+                ref: null,
+                children: [],
+                component,
+                parent: null,
+                depth: 0,
+                dom: null,
+                nextDom: null,
+                hydrating: null,
+                constructor: undefined,
+                original: 0,
+            },
+            depth: 0,
+            dom: null,
+            nextDom: null,
+            hydrating: null,
+            constructor: undefined,
+            original: 0,
         };
         expect(() =>
             catchError({ env, options, error: error1, vnode })
@@ -159,9 +312,32 @@ describe('_catchError', () => {
         component.dirty = true;
         const vnode: VNode = {
             type: 'button',
+            props: { children: [] },
+            key: null,
+            ref: null,
+            children: [],
             component: null,
-            parent: { type: 'div', component, parent: null, depth: null },
-            depth: null,
+            parent: {
+                type: 'div',
+                props: { children: [] },
+                key: null,
+                ref: null,
+                children: [],
+                component,
+                parent: null,
+                depth: 0,
+                dom: null,
+                nextDom: null,
+                hydrating: null,
+                constructor: undefined,
+                original: 0,
+            },
+            depth: 0,
+            dom: null,
+            nextDom: null,
+            hydrating: null,
+            constructor: undefined,
+            original: 0,
         };
         expect(() => catchError({ env, options, error, vnode })).not.toThrow();
         expect(component.pendingError).toBeTruthy();

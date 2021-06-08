@@ -18,8 +18,10 @@ type ComponentChild =
 
 export type ComponentChildren = ComponentChild[] | ComponentChild;
 
+export type Key = string | number;
+
 interface Attributes {
-    key?: string | number;
+    key?: Key;
     jsx?: boolean;
 }
 

@@ -1,6 +1,6 @@
-import type { ComponentClass } from './component';
+import type { ComponentClass, VNode } from './component';
 import type { Options } from './options';
-import type { EmptyObject } from './types';
+import type { AnyObject } from './types';
 
 export interface CreateElementEnv {
     vnodeId: number;
@@ -9,44 +9,37 @@ export interface CreateElementEnv {
 export const createEnv = (): CreateElementEnv => ({ vnodeId: 0 });
 
 // TODO (#10): Make the type more precise
-/* eslint-disable @typescript-eslint/no-explicit-any */
 interface CreateVNodeArgs {
     env: CreateElementEnv;
     options: Options;
-    vnode: {
-        type: any;
-        props: any;
-        key: any;
-        ref: any;
-        original: any;
+    vnode: Pick<VNode, 'type' | 'props' | 'key' | 'ref'> & {
+        original: number | null;
     };
 }
+
 export const createVNode = ({
     env,
     options,
     vnode: { type, props, key, ref, original },
-}: CreateVNodeArgs): any => {
-    /* eslint-enable @typescript-eslint/no-explicit-any */
-    const vnode = {
-        /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+}: CreateVNodeArgs): VNode => {
+    const vnode: VNode = {
         type,
         props,
         key,
         ref,
-        children: null,
+        children: [],
         parent: null,
         depth: 0,
         dom: null,
-        nextDom: undefined,
+        nextDom: null,
         component: null,
         hydrating: null,
         constructor: undefined,
         original: original ?? ++env.vnodeId,
-        /* eslint-enable @typescript-eslint/no-unsafe-assignment */
     };
     if (options.vnode) options.vnode(vnode);
     return vnode;
 };
 
 export const Fragment = ((props: { children: unknown }) =>
-    props.children) as unknown as ComponentClass<EmptyObject, EmptyObject>;
+    props.children) as unknown as ComponentClass<AnyObject, AnyObject>;

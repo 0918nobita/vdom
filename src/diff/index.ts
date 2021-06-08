@@ -9,8 +9,8 @@ interface DiffArgs {
     excessDomChildren: any;
     commitQueue: any;
     oldDom: any;
-    isHydrating: boolean;
     /* eslint-enable @typescript-eslint/no-explicit-any */
+    isHydrating: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function

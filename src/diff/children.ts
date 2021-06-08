@@ -1,3 +1,4 @@
+import type { VNode } from '../component';
 import type { CreateElementEnv } from '../createElement';
 import { createVNode, Fragment } from '../createElement';
 import type { Options } from '../options';
@@ -7,19 +8,19 @@ import { diff } from './index';
 interface DiffChildrenArgs {
     env: CreateElementEnv;
     options: Options;
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    parentDom: any;
-    renderResult: any;
-    newParentVNode: any;
-    oldParentVNode: any;
-    globalContext: any;
+    parentDom: unknown;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    renderResult: any[];
+    newParentVNode: VNode;
+    oldParentVNode: VNode;
+    globalContext: unknown;
     isSvg: boolean;
-    excessDomChildren: any;
-    commitQueue: any;
-    oldDom: any;
+    excessDomChildren: unknown;
+    commitQueue: unknown;
+    oldDom: unknown;
     isHydrating: boolean;
-    /* eslint-enable @typescript-eslint/no-explicit-any */
 }
+
 export const diffChildren = ({
     env,
     options,
@@ -34,21 +35,23 @@ export const diffChildren = ({
     oldDom,
     isHydrating,
 }: DiffChildrenArgs): void => {
-    let oldVNode /*, newDom, firstChildDom, refs*/;
-    /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
-    const oldChildren = (oldParentVNode && oldParentVNode._children) || [];
+    let oldVNode;
+    const oldChildren = (oldParentVNode && oldParentVNode.children) || [];
     const { length: oldChildrenLength } = oldChildren;
-    newParentVNode._children = [];
+    newParentVNode.children = [];
+
     for (let i = 0; i < renderResult.length; i++) {
-        let childVNode = renderResult[i];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        let childVNode: VNode | null = renderResult[i];
+
         if (childVNode === null || typeof childVNode === 'boolean') {
-            childVNode = newParentVNode._children[i] = null;
+            childVNode = newParentVNode.children[i] = null;
         } else if (
             typeof childVNode === 'string' ||
             typeof childVNode === 'number' ||
             typeof childVNode === 'bigint'
         ) {
-            childVNode = newParentVNode._children[i] = createVNode({
+            childVNode = newParentVNode.children[i] = createVNode({
                 env,
                 options,
                 vnode: {
@@ -60,7 +63,7 @@ export const diffChildren = ({
                 },
             });
         } else if (Array.isArray(childVNode)) {
-            childVNode = newParentVNode._children[i] = createVNode({
+            childVNode = newParentVNode.children[i] = createVNode({
                 env,
                 options,
                 vnode: {
@@ -71,8 +74,8 @@ export const diffChildren = ({
                     original: null,
                 },
             });
-        } else if (childVNode._depth > 0) {
-            childVNode = newParentVNode._children[i] = createVNode({
+        } else if (childVNode.depth > 0) {
+            childVNode = newParentVNode.children[i] = createVNode({
                 env,
                 options,
                 vnode: {
@@ -80,25 +83,26 @@ export const diffChildren = ({
                     props: childVNode.props,
                     key: childVNode.key,
                     ref: null,
-                    original: childVNode._original,
+                    original: childVNode.original,
                 },
             });
         } else {
-            childVNode = newParentVNode._children[i] = childVNode;
+            childVNode = newParentVNode.children[i] = childVNode;
         }
 
         if (childVNode === null) continue;
 
-        childVNode._parent = newParentVNode;
-        childVNode._depth = (newParentVNode._depth as number) + 1;
+        childVNode.parent = newParentVNode;
+        childVNode.depth = newParentVNode.depth + 1;
         oldVNode = oldChildren[i];
+
         if (
             oldVNode === null ||
             (oldVNode &&
                 childVNode.key === oldVNode.key &&
                 childVNode.type === oldVNode.type)
         ) {
-            oldChildren[i] = undefined;
+            oldChildren[i] = null;
         } else {
             for (let j = 0; j < oldChildrenLength; j++) {
                 oldVNode = oldChildren[j];
@@ -107,7 +111,7 @@ export const diffChildren = ({
                     childVNode.key === oldVNode.key &&
                     childVNode.type === oldVNode.type
                 ) {
-                    oldChildren[j] = undefined;
+                    oldChildren[j] = null;
                     break;
                 }
                 oldVNode = null;
@@ -126,5 +130,4 @@ export const diffChildren = ({
             isHydrating,
         });
     }
-    /* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
 };
