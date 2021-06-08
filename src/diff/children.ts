@@ -1,12 +1,12 @@
 import type { VNode } from '../component';
-import type { ElementCreationEnv } from '../createElement';
+import type { VNodeCreationEnv } from '../createElement';
 import { createVNode, Fragment } from '../createElement';
 import type { Options } from '../options';
 import { diff } from './index';
 
 // TODO (#6): Implement diffChildren function
 interface DiffChildrenArgs {
-    env: ElementCreationEnv;
+    env: VNodeCreationEnv;
     options: Options;
     parentDom: unknown;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
